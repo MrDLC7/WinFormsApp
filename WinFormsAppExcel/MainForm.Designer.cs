@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupBox = new GroupBox();
+            groupBoxFirst = new GroupBox();
             buttonOpenFile = new Button();
             textBoxColumn = new TextBox();
             textBoxRow = new TextBox();
             labelColumn = new Label();
             labelRow = new Label();
-            groupBox1 = new GroupBox();
+            groupBoxSecond = new GroupBox();
             dataGridView = new DataGridView();
             openFileDialog = new OpenFileDialog();
-            groupBox.SuspendLayout();
-            groupBox1.SuspendLayout();
+            groupBoxFirst.SuspendLayout();
+            groupBoxSecond.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
-            // groupBox
+            // groupBoxFirst
             // 
-            groupBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox.AutoSize = true;
-            groupBox.BackColor = SystemColors.ControlLight;
-            groupBox.Controls.Add(buttonOpenFile);
-            groupBox.Controls.Add(textBoxColumn);
-            groupBox.Controls.Add(textBoxRow);
-            groupBox.Controls.Add(labelColumn);
-            groupBox.Controls.Add(labelRow);
-            groupBox.Controls.Add(groupBox1);
-            groupBox.Location = new Point(0, 0);
-            groupBox.Name = "groupBox";
-            groupBox.Size = new Size(800, 450);
-            groupBox.TabIndex = 0;
-            groupBox.TabStop = false;
+            groupBoxFirst.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBoxFirst.AutoSize = true;
+            groupBoxFirst.BackColor = SystemColors.ControlLight;
+            groupBoxFirst.Controls.Add(buttonOpenFile);
+            groupBoxFirst.Controls.Add(textBoxColumn);
+            groupBoxFirst.Controls.Add(textBoxRow);
+            groupBoxFirst.Controls.Add(labelColumn);
+            groupBoxFirst.Controls.Add(labelRow);
+            groupBoxFirst.Controls.Add(groupBoxSecond);
+            groupBoxFirst.Location = new Point(0, 0);
+            groupBoxFirst.Name = "groupBoxFirst";
+            groupBoxFirst.Size = new Size(800, 450);
+            groupBoxFirst.TabIndex = 0;
+            groupBoxFirst.TabStop = false;
             // 
             // buttonOpenFile
             // 
@@ -111,15 +111,15 @@
             labelRow.TabIndex = 2;
             labelRow.Text = "По рядок:";
             // 
-            // groupBox1
+            // groupBoxSecond
             // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox1.Controls.Add(dataGridView);
-            groupBox1.Location = new Point(7, 84);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(787, 358);
-            groupBox1.TabIndex = 6;
-            groupBox1.TabStop = false;
+            groupBoxSecond.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBoxSecond.Controls.Add(dataGridView);
+            groupBoxSecond.Location = new Point(7, 84);
+            groupBoxSecond.Name = "groupBoxSecond";
+            groupBoxSecond.Size = new Size(787, 358);
+            groupBoxSecond.TabIndex = 6;
+            groupBoxSecond.TabStop = false;
             // 
             // dataGridView
             // 
@@ -136,6 +136,7 @@
             dataGridView.RowHeadersWidth = 51;
             dataGridView.Size = new Size(781, 332);
             dataGridView.TabIndex = 2;
+            dataGridView.RowPostPaint += dataGridView_RowPostPaint;
             // 
             // openFileDialog
             // 
@@ -146,12 +147,12 @@
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(groupBox);
+            Controls.Add(groupBoxFirst);
             Name = "MainForm";
             Text = "Excel export to Table";
-            groupBox.ResumeLayout(false);
-            groupBox.PerformLayout();
-            groupBox1.ResumeLayout(false);
+            groupBoxFirst.ResumeLayout(false);
+            groupBoxFirst.PerformLayout();
+            groupBoxSecond.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -159,14 +160,14 @@
 
         #endregion
 
-        private GroupBox groupBox;
+        private GroupBox groupBoxFirst;
         private Button buttonOpenFile;
         private OpenFileDialog openFileDialog;
         private TextBox textBoxColumn;
         private TextBox textBoxRow;
         private Label labelColumn;
         private Label labelRow;
-        private GroupBox groupBox1;
+        private GroupBox groupBoxSecond;
         private DataGridView dataGridView;
     }
 }
