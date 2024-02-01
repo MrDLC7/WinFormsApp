@@ -131,6 +131,7 @@
             dataGridView.BackgroundColor = SystemColors.ButtonHighlight;
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView.Location = new Point(3, 23);
+            dataGridView.Margin = new Padding(10);
             dataGridView.Name = "dataGridView";
             dataGridView.ReadOnly = true;
             dataGridView.RowHeadersWidth = 51;
@@ -148,6 +149,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(groupBoxFirst);
+            MinimumSize = new Size(818, 497);
             Name = "MainForm";
             Text = "Excel export to Table";
             groupBoxFirst.ResumeLayout(false);

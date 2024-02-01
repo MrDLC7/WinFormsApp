@@ -18,7 +18,7 @@ namespace WinFormsAppExcel
             int column = 0;
             try
             {
-                // Завантаження таблиці по рядок, по колонку
+                // Р—Р°РІР°РЅС‚Р°Р¶РµРЅСЏ С‚Р°Р±Р»РёС†С– РїРѕ СЂСЏРґРєСѓ, РїРѕ РєРѕР»РѕРЅС†С–
                 row = Convert.ToInt32(textBoxRow.Text);
                 column = ConvertColumnExcelToInt(textBoxColumn.Text);
             }
@@ -29,47 +29,47 @@ namespace WinFormsAppExcel
             LoadExcelData(row, column);
         }
 
-        // Завантаження файлу Excel
+        // Р—Р°РІР°РЅС‚Р°Р¶РµРЅР° С„Р°Р№Р»Сѓ Excel
         private void LoadExcelData(int row, int column)
         {
             try
             {
-                // Створення вікна вибору файлу Excel
+                // РЎС‚РІРѕСЂРµРЅРЅСЏ РІС–РєРЅР° РІРёР±РѕСЂСѓ С„Р°Р№Р»Сѓ Excel
                 OpenFileDialog fileExcel = new OpenFileDialog();
-                // Директорія
+                // Р”РёСЂРµРєС‚РѕСЂС–СЏ
                 fileExcel.InitialDirectory = "";
-                // Фільтр по файлах
+                // Р¤С–Р»СЊС‚СЂ РїРѕ С„Р°Р№Р»Р°С…
                 fileExcel.DefaultExt = "*.xls;*.xlsx";
                 fileExcel.Filter = "Excel Sheet(*.xlsx)|*.xlsx";
                 fileExcel.Title = "Select document Excel";
-                // Запам'ятати директорію
+                // Р—Р°РїР°Рј'СЏС‚Р°С‚Рё РґРёСЂРµРєС‚РѕСЂС–СЋ
                 fileExcel.RestoreDirectory = true;
 
-                // Перевірка на існування файлу
+                // Р’С–РґРєСЂРёС‚С‚СЏ С– РїРµСЂРµРІС–СЂРєР° РЅР° С–СЃРЅСѓРІР°РЅРЅСЏ С„Р°Р№Р»Сѓ
                 if (fileExcel.ShowDialog() == DialogResult.OK && fileExcel.FileName.Length > 0)
                 {
-                    // Шлях до файлу
+                    // РЁР»СЏС… РґРѕ С„Р°Р№Р»Сѓ
                     string path = fileExcel.FileName;
 
-                    // Створення файлового потоку, що містить Excel, який потрібно відкрити
+                    // РЎС‚РІРѕСЂРµРЅРЅСЏ С„Р°Р№Р»РѕРІРѕРіРѕ РїРѕС‚РѕРєСѓ, С‰Рѕ РјС–СЃС‚РёС‚Рё Excel, СЏРєРёР№ РїРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРІС–СЂРёС‚Рё
                     FileStream fstream = new FileStream(path, FileMode.Open);
 
-                    // Створення екземпляру об'єкта Workbook
+                    // РЎС‚РІРѕСЂРµРЅРЅСЏ РµРєР·РµРјРїР»СЏСЂСѓ РѕР±'С”РєС‚Р° Workbook
                     Workbook workbook = new Workbook(fstream);
 
-                    // Доступ до першого в файлі Excel
+                    // Р”РѕСЃС‚СѓРї РґРѕ РїРµСЂС€РѕРіРѕ РІ С„Р°Р№Р»С– Excel
                     Worksheet worksheet = workbook.Worksheets[0];
 
-                    // Створення екземпляру класу DataTable для збереження даних
+                    // РЎС‚РІРѕСЂРµРЅРЅСЏ РµРєР·РµРјРїР»СЏСЂСѓ РєР»Р°СЃСѓ DataTable РґР»СЏ Р·Р±РµСЂРµР¶РµРЅРЅСЏ РґР°РЅРёС…
                     DataTable table = new DataTable();
 
-                    // Заповнення DataTable даними з Excel
+                    // Р—Р°РїРѕРІРЅРµРЅРЅСЏ DataTable РґР°РЅРёРјРё Р· Excel
                     table = worksheet.Cells.ExportDataTable(0, 0, row, column, true);
 
-                    // Встановлення DataTable як джерела даних для DataGridView
+                    // Р’СЃС‚Р°РЅРѕРІР»РµРЅРЅСЏ DataTable СЏРє РґР¶РµСЂРµР»Р° РґР°РЅРёС… РґР»СЏ DataGridView
                     dataGridView.DataSource = table;
 
-                    // Закриття файлового потоку
+                    // Р—Р°РєСЂРёС‚С‚СЏ С„Р°Р№Р»РѕРІРѕРіРѕ РїРѕС‚РѕРєСѓ
                     fstream.Close();
                 }
             }
@@ -79,11 +79,11 @@ namespace WinFormsAppExcel
             }
         }
 
-        // Конвертація заголовку із символу в число
+        // РљРѕРЅРІРµСЂС‚Р°С†С–СЏ Р·Р°РіРѕР»РѕРІРєСѓ РєРѕР»РѕРЅРєРё С–Р· СЃРёРјРІРѕР»Сѓ РІ С‡РёСЃР»Рѕ
         private int ConvertColumnExcelToInt(string str)
         {
             int num = 0;
-            // Якщо строка не символ, а число
+            // РЇРєС‰Рѕ СЃС‚СЂРѕРєР° РЅРµ СЃРёРјРІРѕР», Р° С‡РёСЃР»Рѕ
             bool success = int.TryParse(str, out int result);
             if (success)
                 return Convert.ToInt32(str);
@@ -96,7 +96,7 @@ namespace WinFormsAppExcel
         }
 
         /*
-        // Нумерування рядків по кліку
+        // РќСѓРјРµСЂСѓРІР°РЅРЅСЏ СЂСЏРґРєС–РІ РїРѕ РєР»С–РєСѓ
         private void dataGridView_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int rowIndex = e.RowIndex + 1;
@@ -104,13 +104,13 @@ namespace WinFormsAppExcel
         }
         */
 
-        // Авто-нумерування рядків
+        // РђРІС‚Рѕ-РЅСѓРјРµСЂСѓРІР°РЅРЅСЏ СЂСЏРґРєС–РІ
         private void dataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            // Отримуємо рядок, який потрібно пронумерувати
+            // РћС‚СЂРёРјСѓС”РјРѕ СЂСЏРґРѕРє, СЏРєРёР№ РїРѕС‚СЂС–Р±РЅРѕ РїСЂРѕРЅСѓРјРµСЂСѓРІР°С‚Рё
             DataGridViewRow row = dataGridView.Rows[e.RowIndex];
 
-            // Відображення номера рядка у заголовку
+            // Р’С–РґРѕР±СЂР°Р¶РµРЅРЅСЏ РЅРѕРјРµСЂР° СЂСЏРґРєР° Сѓ Р·Р°РіРѕР»РѕРІРєСѓ
             using (SolidBrush brush = new SolidBrush(dataGridView.RowHeadersDefaultCellStyle.ForeColor))
             {
                 e.Graphics.DrawString((e.RowIndex + 1).ToString(), e.InheritedRowStyle.Font, brush,
