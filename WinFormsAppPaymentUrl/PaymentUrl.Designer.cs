@@ -45,7 +45,7 @@
             panelMain.Controls.Add(btnOpenFile);
             panelMain.Location = new Point(1, 1);
             panelMain.Name = "panelMain";
-            panelMain.Size = new Size(582, 351);
+            panelMain.Size = new Size(782, 451);
             panelMain.TabIndex = 0;
             // 
             // dataGridView
@@ -58,15 +58,16 @@
             dataGridView.Location = new Point(11, 86);
             dataGridView.Name = "dataGridView";
             dataGridView.ReadOnly = true;
+            dataGridView.RowHeadersVisible = false;
             dataGridView.RowHeadersWidth = 51;
-            dataGridView.Size = new Size(558, 254);
+            dataGridView.Size = new Size(758, 354);
             dataGridView.TabIndex = 2;
             // 
             // btnUpdateDataFile
             // 
             btnUpdateDataFile.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnUpdateDataFile.BackColor = Color.YellowGreen;
-            btnUpdateDataFile.Location = new Point(289, 11);
+            btnUpdateDataFile.Location = new Point(489, 11);
             btnUpdateDataFile.Name = "btnUpdateDataFile";
             btnUpdateDataFile.Size = new Size(275, 60);
             btnUpdateDataFile.TabIndex = 1;
@@ -93,9 +94,9 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(582, 353);
+            ClientSize = new Size(782, 453);
             Controls.Add(panelMain);
-            MinimumSize = new Size(600, 400);
+            MinimumSize = new Size(800, 500);
             Name = "PaymentUrl";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "PaymentUrl";
