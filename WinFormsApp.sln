@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsAppExcel", "WinFormsAppExcel\WinFormsAppExcel.csproj", "{594D3121-4FD0-4B88-B745-900D146C373E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsAppExcel", "WinFormsAppExcel\WinFormsAppExcel.csproj", "{594D3121-4FD0-4B88-B745-900D146C373E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsAppPaymentUrl", "WinFormsAppPaymentUrl\WinFormsAppPaymentUrl.csproj", "{F6922BF2-E409-44A3-925E-553754A22CEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{594D3121-4FD0-4B88-B745-900D146C373E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{594D3121-4FD0-4B88-B745-900D146C373E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{594D3121-4FD0-4B88-B745-900D146C373E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6922BF2-E409-44A3-925E-553754A22CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6922BF2-E409-44A3-925E-553754A22CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6922BF2-E409-44A3-925E-553754A22CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6922BF2-E409-44A3-925E-553754A22CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
