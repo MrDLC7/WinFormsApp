@@ -1,6 +1,7 @@
 using Aspose.Cells;
 using System.Data.Common;
 using System.Data;
+using System.Windows.Forms;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -11,7 +12,7 @@ namespace WinFormsAppPaymentUrl
             InitializeComponent();
         }
 
-        private int row = 0, column = 0;
+        private int rows = 0, columns = 0;
         private string path = string.Empty;
 
         private void btnOpenFile_Click(object sender, EventArgs e)
@@ -46,9 +47,20 @@ namespace WinFormsAppPaymentUrl
 
         private void btnUpdateDataFile_Click(object sender, EventArgs e)
         {
+            int statusIndexColumn = -1;
+            int statusIndexRow = -1;
+            int linkIndexColumn = -1;
 
             try
             {
+                SearchString("Payment Link", out statusIndexRow, out linkIndexColumn);
+                SearchString("Status", out statusIndexRow, out statusIndexColumn);
+
+                while (statusIndexRow > 0)
+                {
+                    statusIndexRow = SearchStringForStatus("open", "pending", statusIndexColumn);
+                    AddPaymentUrl(statusIndexRow, linkIndexColumn);
+                }
             }
             catch (Exception ex)
             {
@@ -71,14 +83,14 @@ namespace WinFormsAppPaymentUrl
                 Worksheet worksheet = workbook.Worksheets[0];
 
                 // Макс. кількість рядків і колонок
-                row = worksheet.Cells.MaxDataRow + 1;
-                column = worksheet.Cells.MaxDataColumn + 1;
+                rows = worksheet.Cells.MaxDataRow + 1;
+                columns = worksheet.Cells.MaxDataColumn + 1;
 
                 // Створення екземпляру класу DataTable для збереження даних
                 DataTable table = new DataTable();
 
                 // Заповнення DataTable даними з Excel
-                table = worksheet.Cells.ExportDataTable(0, 0, row, column, true);
+                table = worksheet.Cells.ExportDataTable(0, 0, rows, columns, true);
                 // Встановлення DataTable як джерела даних для DataGridView
                 dataGridView.DataSource = table;
 
@@ -105,8 +117,8 @@ namespace WinFormsAppPaymentUrl
                 Worksheet worksheet = workbook.Worksheets[0];
 
                 // Макс. кількість рядків і колонок
-                row = worksheet.Cells.MaxDataRow + 1;
-                column = worksheet.Cells.MaxDataColumn + 1;
+                rows = worksheet.Cells.MaxDataRow + 1;
+                columns = worksheet.Cells.MaxDataColumn + 1;
 
                 // Створення екземпляру класу DataTable для збереження даних
                 DataTable dataTable = new DataTable();
@@ -138,6 +150,69 @@ namespace WinFormsAppPaymentUrl
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-    
+
+        private void SearchString(string searchString, out int rowIndex, out int columnIndex)
+        {
+            // Перебираем строки в DataGridView
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                // Перебираем ячейки в текущей строке
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    // Проверяем, содержит ли значение ячейки искомую подстроку
+                    if (cell.Value != null && cell.Value.ToString().Contains(searchString))
+                    {
+                        // Нашли подстроку, сохраняем индексы строки и столбца
+                        rowIndex = row.Index;
+                        columnIndex = cell.ColumnIndex;
+                        return; // Если нужно найти только первое вхождение в DataGridView, раскомментируйте эту строку
+                    }
+                }
+            }
+            rowIndex = -1;
+            columnIndex = -1;
+        }
+
+        private int SearchStringForStatus(string searchString, string renameString, int columnIndex)
+        {
+            // Перебираем строки в DataGridView
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                // Перебираем ячейки в текущей строке
+                foreach (DataGridViewCell cell in row.Cells)
+                {
+                    // Проверяем, содержит ли значение ячейки искомую подстроку
+                    if (cell.Value != null && cell.ColumnIndex == columnIndex &&
+                        cell.Value.ToString().Contains(searchString))
+                    {
+                        // Нашли подстроку, сохраняем индексы строки
+                        cell.Value = renameString;
+                        return row.Index;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private bool AddPaymentUrl(int rowIndex, int columnIndex)
+        {
+            // Перебираем строки в DataGridView
+            foreach (DataGridViewRow row in dataGridView.Rows)
+            {
+                if (row.Index == rowIndex)
+                {
+                    // Перебираем ячейки в текущей строке
+                    foreach (DataGridViewCell cell in row.Cells)
+                    {
+                        // Проверяем, содержит ли значение ячейки искомую подстроку
+                        if (cell.ColumnIndex == columnIndex)
+                        {
+                            cell.Value = null;///////////////
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     }
 }
