@@ -2,6 +2,8 @@ using Aspose.Cells;
 using System.Data.Common;
 using System.Data;
 using System.Windows.Forms;
+using System.IO.Compression;
+using System.Xml;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -14,6 +16,8 @@ namespace WinFormsAppPaymentUrl
 
         private int rows = 0, columns = 0;
         private string path = string.Empty;
+        // Створення екземпляру класу DataTable для збереження даних
+        private DataTable dataTable;
 
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
@@ -56,7 +60,8 @@ namespace WinFormsAppPaymentUrl
                 SearchString("Payment Link", out statusIndexRow, out linkIndexColumn);
                 SearchString("Status", out statusIndexRow, out statusIndexColumn);
 
-                while (statusIndexRow > 0)
+
+                while (statusIndexRow >= 0)
                 {
                     statusIndexRow = SearchStringForStatus("open", "pending", statusIndexColumn);
                     AddPaymentUrl(statusIndexRow, linkIndexColumn);
@@ -86,15 +91,14 @@ namespace WinFormsAppPaymentUrl
                 rows = worksheet.Cells.MaxDataRow + 1;
                 columns = worksheet.Cells.MaxDataColumn + 1;
 
-                // Створення екземпляру класу DataTable для збереження даних
-                DataTable table = new DataTable();
 
                 // Заповнення DataTable даними з Excel
-                table = worksheet.Cells.ExportDataTable(0, 0, rows, columns, true);
+                dataTable = worksheet.Cells.ExportDataTable(0, 0, rows, columns, true);
                 // Встановлення DataTable як джерела даних для DataGridView
-                dataGridView.DataSource = table;
+                dataGridView.DataSource = dataTable;
 
                 // Закриття файлового потоку
+                workbook.Dispose();
                 fstream.Close();
             }
             catch (Exception ex)
@@ -107,19 +111,14 @@ namespace WinFormsAppPaymentUrl
         {
             try
             {
-                // Створення файлового потоку, що містити Excel, який потрібно перевірити
-                FileStream fstream = new FileStream(path, FileMode.Open);
 
                 // Створення екземпляру об'єкта Workbook
-                Workbook workbook = new Workbook(fstream);
+                Workbook workbook = new Workbook();
 
                 // Доступ до першого в файлі Excel
                 Worksheet worksheet = workbook.Worksheets[0];
 
-                // Макс. кількість рядків і колонок
-                rows = worksheet.Cells.MaxDataRow + 1;
-                columns = worksheet.Cells.MaxDataColumn + 1;
-
+                /*
                 // Створення екземпляру класу DataTable для збереження даних
                 DataTable dataTable = new DataTable();
 
@@ -137,13 +136,16 @@ namespace WinFormsAppPaymentUrl
                     }
                     dataTable.Rows.Add(dataRow);
                 }
+                */
 
                 // Заповнення DataTable даними з Excel
-                worksheet.Cells.ImportDataTable(dataTable, true, 0, 0);
-                workbook.Save(path);
+                ImportTableOptions options = new ImportTableOptions();
+                options.IsFieldNameShown = false;
+                worksheet.Cells.ImportData(dataTable, 0, 0, options);
 
+                workbook.Save(path);
                 // Закриття файлового потоку
-                fstream.Close();
+                workbook.Dispose();
             }
             catch (Exception ex)
             {
@@ -153,6 +155,16 @@ namespace WinFormsAppPaymentUrl
 
         private void SearchString(string searchString, out int rowIndex, out int columnIndex)
         {
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+            {
+                if (column.HeaderText != null && column.HeaderText.ToString().Contains(searchString))
+                {
+                    // Нашли подстроку, сохраняем индексы строки и столбца
+                    rowIndex = 0;
+                    columnIndex = column.Index;
+                    return; // Если нужно найти только первое вхождение в DataGridView, раскомментируйте эту строку
+                }
+            }
             // Перебираем строки в DataGridView
             foreach (DataGridViewRow row in dataGridView.Rows)
             {
@@ -207,12 +219,14 @@ namespace WinFormsAppPaymentUrl
                         // Проверяем, содержит ли значение ячейки искомую подстроку
                         if (cell.ColumnIndex == columnIndex)
                         {
-                            cell.Value = null;///////////////
+                            cell.Value = "yes";
+                            return true;
                         }
                     }
                 }
             }
             return true;
         }
+    
     }
 }
