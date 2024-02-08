@@ -1,9 +1,11 @@
-using Aspose.Cells;
+using System.Reflection;
+using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.Common;
 using System.Data;
 using System.Windows.Forms;
 using System.IO.Compression;
 using System.Xml;
+using Microsoft.Office.Interop.Excel;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -17,7 +19,7 @@ namespace WinFormsAppPaymentUrl
         private int rows = 0, columns = 0;
         private string path = string.Empty;
         // Створення екземпляру класу DataTable для збереження даних
-        private DataTable dataTable;
+        private System.Data.DataTable dataTable = new();
 
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
@@ -25,7 +27,7 @@ namespace WinFormsAppPaymentUrl
             try
             {
                 // Створення вікна вибору файлу Excel
-                OpenFileDialog fileExcel = new OpenFileDialog();
+                OpenFileDialog fileExcel = new();
                 // Директорія
                 fileExcel.InitialDirectory = "";
                 // Фільтр по файлах
@@ -76,34 +78,56 @@ namespace WinFormsAppPaymentUrl
 
         private void OpenFileExcel()
         {
+
+            // Відкриття файлу
+            Excel.Application app = new();
+            // Створення екземпляру об'єкта Workbook
+            Workbook workbook = app.Workbooks.Open(path);
+
+            // Доступ до першого листа в файлі Excel
+            _Worksheet worksheet = workbook.Sheets[1];
+
+            // Отримання даних
+            Excel.Range range = worksheet.UsedRange;
+
+            // Макс. кількість рядків і колонок
+            rows = range.Rows.Count;
+            columns = range.Columns.Count;
+
             try
             {
-                // Створення файлового потоку, що містити Excel, який потрібно перевірити
-                FileStream fstream = new FileStream(path, FileMode.Open);
-
-                // Створення екземпляру об'єкта Workbook
-                Workbook workbook = new Workbook(fstream);
-
-                // Доступ до першого в файлі Excel
-                Worksheet worksheet = workbook.Worksheets[0];
-
-                // Макс. кількість рядків і колонок
-                rows = worksheet.Cells.MaxDataRow + 1;
-                columns = worksheet.Cells.MaxDataColumn + 1;
-
-
-                // Заповнення DataTable даними з Excel
-                dataTable = worksheet.Cells.ExportDataTable(0, 0, rows, columns, true);
-                // Встановлення DataTable як джерела даних для DataGridView
-                dataGridView.DataSource = dataTable;
-
-                // Закриття файлового потоку
-                workbook.Dispose();
-                fstream.Close();
+                for (int row = 1; row <= rows; row++)
+                {
+                    DataRow dr = dataTable.NewRow();
+                    for (int column = 1; column <= columns; column++)
+                    {
+                        if (row == 1)
+                        {
+                            dataTable.Columns.Add(range.Cells[row, column].Value2.ToString());
+                        }
+                        else
+                        {
+                            dr[column - 1] = range.Cells[row, column].Value2;
+                        }
+                    }
+                    if (row != 1)
+                    {
+                        dataTable.Rows.Add(dr);
+                    }
+                    dataTable.AcceptChanges();
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                // Встановлення DataTable як джерела даних для DataGridView
+                dataGridView.DataSource = dataTable;
+                // Закриття об'єктів Excel
+                workbook.Close();
+                app.Quit();
             }
         }
 
@@ -112,6 +136,7 @@ namespace WinFormsAppPaymentUrl
             try
             {
 
+                /*
                 // Створення екземпляру об'єкта Workbook
                 Workbook workbook = new Workbook();
 
@@ -136,7 +161,7 @@ namespace WinFormsAppPaymentUrl
                     }
                     dataTable.Rows.Add(dataRow);
                 }
-                */
+
 
                 // Заповнення DataTable даними з Excel
                 ImportTableOptions options = new ImportTableOptions();
@@ -146,6 +171,8 @@ namespace WinFormsAppPaymentUrl
                 workbook.Save(path);
                 // Закриття файлового потоку
                 workbook.Dispose();
+
+                */
             }
             catch (Exception ex)
             {
@@ -225,8 +252,8 @@ namespace WinFormsAppPaymentUrl
                     }
                 }
             }
-            return true;
+            return false;
         }
-    
+
     }
 }
