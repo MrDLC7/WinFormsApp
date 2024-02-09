@@ -108,9 +108,9 @@
         #endregion
 
         private Panel panelMain;
-        private DataGridView dataGridView;
         private Button btnUpdateDataFile;
         private Button btnOpenFile;
         private OpenFileDialog openFileDialog;
+        static protected DataGridView dataGridView;
     }
 }

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsAppExcel", "WinForm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsAppPaymentUrl", "WinFormsAppPaymentUrl\WinFormsAppPaymentUrl.csproj", "{F6922BF2-E409-44A3-925E-553754A22CEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsLibraryOpenAndUpdateExcelFile", "WinFormsLibraryOpenAndUpdateExcelFile\WinFormsLibraryOpenAndUpdateExcelFile.csproj", "{8D9B881E-19D0-421C-BA9E-AD11D095341B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F6922BF2-E409-44A3-925E-553754A22CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6922BF2-E409-44A3-925E-553754A22CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6922BF2-E409-44A3-925E-553754A22CEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D9B881E-19D0-421C-BA9E-AD11D095341B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D9B881E-19D0-421C-BA9E-AD11D095341B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D9B881E-19D0-421C-BA9E-AD11D095341B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D9B881E-19D0-421C-BA9E-AD11D095341B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
