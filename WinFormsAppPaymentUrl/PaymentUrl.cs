@@ -5,7 +5,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.IO.Compression;
 using System.Xml;
-using Microsoft.Office.Interop.Excel;
+//using Microsoft.Office.Interop.Excel;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -16,7 +16,6 @@ namespace WinFormsAppPaymentUrl
             InitializeComponent();
         }
 
-        private int rows = 0, columns = 0;
         private string path = string.Empty;
         // Створення екземпляру класу DataTable для збереження даних
         private System.Data.DataTable dataTable = new();
@@ -44,6 +43,9 @@ namespace WinFormsAppPaymentUrl
                     path = fileExcel.FileName;
                     OpenFileExcel();
                 }
+
+                // Встановлення DataTable як джерела даних для DataGridView
+                dataGridView.DataSource = dataTable;
             }
             catch (Exception ex)
             {
@@ -59,14 +61,16 @@ namespace WinFormsAppPaymentUrl
 
             try
             {
-                SearchString("Payment Link", out statusIndexRow, out linkIndexColumn);
-                SearchString("Status", out statusIndexRow, out statusIndexColumn);
+                // Пошук індексів потрібних заголовків
+                SearchColumn_Header("Payment Link", out statusIndexRow, out linkIndexColumn);
+                SearchColumn_Header("Status", out statusIndexRow, out statusIndexColumn);
 
-
-                while (statusIndexRow >= 0)
+                int N = dataTable.Rows.Count;   // Кількіть рядків без заголовка
+                while (statusIndexRow < N)
                 {
-                    statusIndexRow = SearchStringForStatus("open", "pending", statusIndexColumn);
-                    AddPaymentUrl(statusIndexRow, linkIndexColumn);
+                    // Оновлення колонки з заголовком "Статус"
+                    UpdatePayStatus("open", "pending", statusIndexRow, statusIndexColumn, linkIndexColumn);
+                    statusIndexRow++;
                 }
             }
             catch (Exception ex)
@@ -78,24 +82,24 @@ namespace WinFormsAppPaymentUrl
 
         private void OpenFileExcel()
         {
-
             // Відкриття файлу
             Excel.Application app = new();
             // Створення екземпляру об'єкта Workbook
-            Workbook workbook = app.Workbooks.Open(path);
+            Excel.Workbook workbook = app.Workbooks.Open(path);
 
             // Доступ до першого листа в файлі Excel
-            _Worksheet worksheet = workbook.Sheets[1];
+            Excel._Worksheet worksheet = workbook.Sheets[1];
 
             // Отримання даних
             Excel.Range range = worksheet.UsedRange;
 
             // Макс. кількість рядків і колонок
-            rows = range.Rows.Count;
-            columns = range.Columns.Count;
+            int rows = range.Rows.Count;
+            int columns = range.Columns.Count;
 
             try
             {
+                // Заповнення DataTable даними з Excel
                 for (int row = 1; row <= rows; row++)
                 {
                     DataRow dr = dataTable.NewRow();
@@ -103,15 +107,18 @@ namespace WinFormsAppPaymentUrl
                     {
                         if (row == 1)
                         {
+                            // Додавання стовпців для першого рядка Excel
                             dataTable.Columns.Add(range.Cells[row, column].Value2.ToString());
                         }
                         else
                         {
+                            // Додавання даних у DataTable
                             dr[column - 1] = range.Cells[row, column].Value2;
                         }
                     }
                     if (row != 1)
                     {
+                        // Додавання рядка до DataTable
                         dataTable.Rows.Add(dr);
                     }
                     dataTable.AcceptChanges();
@@ -123,137 +130,92 @@ namespace WinFormsAppPaymentUrl
             }
             finally
             {
-                // Встановлення DataTable як джерела даних для DataGridView
-                dataGridView.DataSource = dataTable;
                 // Закриття об'єктів Excel
                 workbook.Close();
+
+                // Закриття додатку Excel
                 app.Quit();
             }
         }
 
         private void UpdateFileExcel()
         {
+            // Відкриття файлу
+            Excel.Application app = new();
+            // Створення екземпляру об'єкта Workbook
+            Excel.Workbook workbook = app.Workbooks.Open(path);
+
+            // Доступ до першого листа в файлі Excel
+            Excel._Worksheet worksheet = workbook.Sheets[1];
+
             try
             {
+                int Nrows = dataTable.Rows.Count;
+                int Ncols = dataTable.Columns.Count;
 
-                /*
-                // Створення екземпляру об'єкта Workbook
-                Workbook workbook = new Workbook();
 
-                // Доступ до першого в файлі Excel
-                Worksheet worksheet = workbook.Worksheets[0];
-
-                /*
-                // Створення екземпляру класу DataTable для збереження даних
-                DataTable dataTable = new DataTable();
-
-                // Встановлення DataTable як джерела даних для DataGridView
-                foreach (DataGridViewColumn column in dataGridView.Columns)
+                // Заповнення заголовків Excel, даними з DataTable
+                for (int column = 0; column < Ncols; column++)
                 {
-                    dataTable.Columns.Add(column.HeaderText, typeof(string));
+                    worksheet.Cells[1, column + 1] = dataTable.Columns[column].ColumnName;
                 }
-                foreach (DataGridViewRow row in dataGridView.Rows)
+
+                // Заповнення полів Excel, даними з DataTable
+                for (int row = 0; row < Nrows; row++)
                 {
-                    DataRow dataRow = dataTable.NewRow();
-                    foreach (DataGridViewCell cell in row.Cells)
+                    for (int column = 0; column < Ncols; column++)
                     {
-                        dataRow[cell.ColumnIndex] = cell.Value;
+                        worksheet.Cells[row + 2, column + 1] = dataTable.Rows[row][column].ToString();
                     }
-                    dataTable.Rows.Add(dataRow);
                 }
-
-
-                // Заповнення DataTable даними з Excel
-                ImportTableOptions options = new ImportTableOptions();
-                options.IsFieldNameShown = false;
-                worksheet.Cells.ImportData(dataTable, 0, 0, options);
-
-                workbook.Save(path);
-                // Закриття файлового потоку
-                workbook.Dispose();
-
-                */
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+            finally
+            {
+                // Збереження книги Excel
+                workbook.Save();
+                // Закриття об'єктів Excel
+                workbook.Close();
+                // Закриття додатку Excel
+                app.Quit();
+            }
         }
 
-        private void SearchString(string searchString, out int rowIndex, out int columnIndex)
+        private void SearchColumn_Header(string searchString, out int rowIndex, out int columnIndex)
         {
+            // Значення за замовчуванням
+            rowIndex = columnIndex = 0;
             foreach (DataGridViewColumn column in dataGridView.Columns)
             {
                 if (column.HeaderText != null && column.HeaderText.ToString().Contains(searchString))
                 {
-                    // Нашли подстроку, сохраняем индексы строки и столбца
-                    rowIndex = 0;
+                    // Знайшли заголовок, зберігаємо індекси рядка та стовпця і виходимо
                     columnIndex = column.Index;
-                    return; // Если нужно найти только первое вхождение в DataGridView, раскомментируйте эту строку
+                    return;
                 }
             }
-            // Перебираем строки в DataGridView
-            foreach (DataGridViewRow row in dataGridView.Rows)
-            {
-                // Перебираем ячейки в текущей строке
-                foreach (DataGridViewCell cell in row.Cells)
-                {
-                    // Проверяем, содержит ли значение ячейки искомую подстроку
-                    if (cell.Value != null && cell.Value.ToString().Contains(searchString))
-                    {
-                        // Нашли подстроку, сохраняем индексы строки и столбца
-                        rowIndex = row.Index;
-                        columnIndex = cell.ColumnIndex;
-                        return; // Если нужно найти только первое вхождение в DataGridView, раскомментируйте эту строку
-                    }
-                }
-            }
-            rowIndex = -1;
-            columnIndex = -1;
+            MessageBox.Show("Заголовок не знайдено");
         }
 
-        private int SearchStringForStatus(string searchString, string renameString, int columnIndex)
+        private void UpdatePayStatus(string in_String, string out_String, int rowIndex, int columnIndex, int linkIndexColumn)
         {
-            // Перебираем строки в DataGridView
-            foreach (DataGridViewRow row in dataGridView.Rows)
+            if (dataTable.Rows[rowIndex][columnIndex].ToString().Contains(in_String))
             {
-                // Перебираем ячейки в текущей строке
-                foreach (DataGridViewCell cell in row.Cells)
-                {
-                    // Проверяем, содержит ли значение ячейки искомую подстроку
-                    if (cell.Value != null && cell.ColumnIndex == columnIndex &&
-                        cell.Value.ToString().Contains(searchString))
-                    {
-                        // Нашли подстроку, сохраняем индексы строки
-                        cell.Value = renameString;
-                        return row.Index;
-                    }
-                }
+                dataTable.Rows[rowIndex][columnIndex] = out_String;
+                // Додавання посилання
+                dataTable.Rows[rowIndex][linkIndexColumn] = AddPaymentUrl(rowIndex, columnIndex);
             }
-            return -1;
         }
 
-        private bool AddPaymentUrl(int rowIndex, int columnIndex)
+        private string AddPaymentUrl(int rowIndex, int columnIndex)
         {
-            // Перебираем строки в DataGridView
-            foreach (DataGridViewRow row in dataGridView.Rows)
-            {
-                if (row.Index == rowIndex)
-                {
-                    // Перебираем ячейки в текущей строке
-                    foreach (DataGridViewCell cell in row.Cells)
-                    {
-                        // Проверяем, содержит ли значение ячейки искомую подстроку
-                        if (cell.ColumnIndex == columnIndex)
-                        {
-                            cell.Value = "yes";
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            string str = string.Empty;
+            for (int i = 0; i < columnIndex; i++)
+                str += dataTable.Rows[rowIndex][i] + " ";
+            return str;
         }
-
     }
 }
