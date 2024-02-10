@@ -20,4 +20,8 @@
     </COMReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CloudIpspSDK" Version="1.0.5" />
+  </ItemGroup>
+
 </Project>

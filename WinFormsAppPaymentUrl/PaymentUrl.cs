@@ -1,10 +1,4 @@
-//using System.Reflection;
-//using Excel = Microsoft.Office.Interop.Excel;
-using System.Data.Common;
 using System.Data;
-using System.Windows.Forms;
-using System.IO.Compression;
-using System.Xml;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -47,16 +41,20 @@ namespace WinFormsAppPaymentUrl
 
                 // Встановлення DataTable як джерела даних для DataGridView
                 dataGridView.DataSource = dataTable;
+                // Зміна розміру комірок взалежності від вмісту
+                dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+            Text = "PaymentUrl" + "      " + path;
         }
         
         // Оновлення файлу Excel
         private void btnUpdateDataFile_Click(object sender, EventArgs e)
         {
+            int debtIndexColumn = -1;
             int statusIndexColumn = -1;
             int statusIndexRow = -1;
             int linkIndexColumn = -1;
@@ -64,14 +62,22 @@ namespace WinFormsAppPaymentUrl
             try
             {
                 // Пошук індексів потрібних заголовків
-                OpenAndUpdateExcel.SearchColumn_Header("Payment Link", out statusIndexRow, out linkIndexColumn);
-                OpenAndUpdateExcel.SearchColumn_Header("Status", out statusIndexRow, out statusIndexColumn);
+                OpenAndUpdateExcel.SearchColumn_Header("Payment Link", 
+                    out statusIndexRow, out linkIndexColumn);
+
+                OpenAndUpdateExcel.SearchColumn_Header("Status", 
+                    out statusIndexRow, out statusIndexColumn);
+
+                OpenAndUpdateExcel.SearchColumn_Header("Debt", 
+                    out statusIndexRow, out debtIndexColumn);
 
                 int Nrow = dataTable.Rows.Count;   // Кількіть рядків без заголовка
                 while (statusIndexRow < Nrow)
                 {
                     // Оновлення колонки з заголовком "Статус"
-                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending", statusIndexRow, statusIndexColumn, linkIndexColumn);
+                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending", 
+                        statusIndexRow, statusIndexColumn, linkIndexColumn, debtIndexColumn);
+
                     statusIndexRow++;
                 }
             }
@@ -79,7 +85,13 @@ namespace WinFormsAppPaymentUrl
             {
                 MessageBox.Show("Error: " + ex.Message);
             }
+
+            // Оновлення документу Excel
             OpenAndUpdateExcel.UpdateFile();
+            // Зміна розміру комірок взалежності від вмісту
+            dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
+            MessageBox.Show("Посилання сформовані");
         }
     }
 }

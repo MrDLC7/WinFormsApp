@@ -98,7 +98,6 @@
             Controls.Add(panelMain);
             MinimumSize = new Size(800, 500);
             Name = "PaymentUrl";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "PaymentUrl";
             panelMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();

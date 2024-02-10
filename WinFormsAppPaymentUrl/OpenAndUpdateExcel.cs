@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Windows.Forms;
+using System.Security.Policy;
+using CloudIpspSDK;
+using CloudIpspSDK.Checkout;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -17,6 +12,7 @@ namespace WinFormsAppPaymentUrl
         {
             // Відкриття файлу
             Excel.Application app = new();
+
             // Створення екземпляру об'єкта Workbook
             Excel.Workbook workbook = app.Workbooks.Open(path);
 
@@ -75,6 +71,7 @@ namespace WinFormsAppPaymentUrl
         {
             // Відкриття файлу
             Excel.Application app = new();
+
             // Створення екземпляру об'єкта Workbook
             Excel.Workbook workbook = app.Workbooks.Open(path);
 
@@ -133,22 +130,46 @@ namespace WinFormsAppPaymentUrl
             MessageBox.Show("Заголовок не знайдено");
         }
 
-        static public void UpdatePayStatus(string in_String, string out_String, int rowIndex, int columnIndex, int linkIndexColumn)
+        static public void UpdatePayStatus(string in_String, string out_String, int rowIndex,
+            int columnIndexStatus, int linkIndexColumn, int debtIndexColumn)
         {
-            if (dataTable.Rows[rowIndex][columnIndex].ToString().Contains(in_String))
+            if (dataTable.Rows[rowIndex][columnIndexStatus].ToString().Contains(in_String))
             {
-                dataTable.Rows[rowIndex][columnIndex] = out_String;
+                // Зміна статусу
+                dataTable.Rows[rowIndex][columnIndexStatus] = out_String;
                 // Додавання посилання
-                dataTable.Rows[rowIndex][linkIndexColumn] = AddPaymentUrl(rowIndex, columnIndex);
+                dataTable.Rows[rowIndex][linkIndexColumn] = AddPaymentUrl(rowIndex, debtIndexColumn);
             }
         }
 
         static public string AddPaymentUrl(int rowIndex, int columnIndex)
         {
-            string str = string.Empty;
-            for (int i = 0; i < columnIndex; i++)
-                str += dataTable.Rows[rowIndex][i] + (((i + 1) == columnIndex) ? "" : " ");
-            return str;
+            string url = string.Empty;
+
+            Config.MerchantId = 1396424;
+            Config.SecretKey = "test";
+
+            try
+            {
+                var req = new CheckoutRequest
+                {
+                    order_id = Guid.NewGuid().ToString("N"),
+                    amount = Convert.ToInt32(dataTable.Rows[rowIndex][columnIndex]),
+                    order_desc = "checkout json demo",
+                    currency = "EUR"
+                };
+
+                var resp = new CloudIpspSDK.Checkout.Url().Post(req);
+                if (resp.Error == null)
+                {
+                    url = resp.checkout_url;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            return url;
         }
 
     }
