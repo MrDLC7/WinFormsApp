@@ -62,8 +62,6 @@
             dataGridView.RowHeadersWidth = 51;
             dataGridView.Size = new Size(758, 354);
             dataGridView.TabIndex = 2;
-            dataGridView.CellContentDoubleClick += dataGridView_CellContentDoubleClick;
-            dataGridView.CellFormatting += dataGridView_CellFormatting;
             // 
             // btnUpdateDataFile
             // 

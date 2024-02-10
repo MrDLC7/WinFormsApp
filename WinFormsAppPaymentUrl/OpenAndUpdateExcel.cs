@@ -26,8 +26,6 @@ namespace WinFormsAppPaymentUrl
             int rows = range.Rows.Count;
             int columns = range.Columns.Count;
 
-            DataTable dataTableCopy = new();
-            dataTable = dataTableCopy;
             try
             {
                 // Заповнення DataTable даними з Excel
@@ -173,5 +171,6 @@ namespace WinFormsAppPaymentUrl
             }
             return url;
         }
+
     }
 }

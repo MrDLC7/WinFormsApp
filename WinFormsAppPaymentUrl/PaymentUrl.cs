@@ -1,6 +1,4 @@
 using System.Data;
-using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -19,6 +17,7 @@ namespace WinFormsAppPaymentUrl
         // Відкриття файлу Excel
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
+
             try
             {
                 // Створення вікна вибору файлу Excel
@@ -37,13 +36,11 @@ namespace WinFormsAppPaymentUrl
                 {
                     // Шлях до файлу
                     path = fileExcel.FileName;
-
                     OpenAndUpdateExcel.OpenFile();
                 }
 
                 // Встановлення DataTable як джерела даних для DataGridView
                 dataGridView.DataSource = dataTable;
-
                 // Зміна розміру комірок взалежності від вмісту
                 dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
@@ -53,7 +50,7 @@ namespace WinFormsAppPaymentUrl
             }
             Text = "PaymentUrl" + "      " + path;
         }
-
+        
         // Оновлення файлу Excel
         private void btnUpdateDataFile_Click(object sender, EventArgs e)
         {
@@ -65,20 +62,20 @@ namespace WinFormsAppPaymentUrl
             try
             {
                 // Пошук індексів потрібних заголовків
-                OpenAndUpdateExcel.SearchColumn_Header("Payment Link",
+                OpenAndUpdateExcel.SearchColumn_Header("Payment Link", 
                     out statusIndexRow, out linkIndexColumn);
 
-                OpenAndUpdateExcel.SearchColumn_Header("Status",
+                OpenAndUpdateExcel.SearchColumn_Header("Status", 
                     out statusIndexRow, out statusIndexColumn);
 
-                OpenAndUpdateExcel.SearchColumn_Header("Debt",
+                OpenAndUpdateExcel.SearchColumn_Header("Debt", 
                     out statusIndexRow, out debtIndexColumn);
 
                 int Nrow = dataTable.Rows.Count;   // Кількіть рядків без заголовка
                 while (statusIndexRow < Nrow)
                 {
                     // Оновлення колонки з заголовком "Статус"
-                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending",
+                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending", 
                         statusIndexRow, statusIndexColumn, linkIndexColumn, debtIndexColumn);
 
                     statusIndexRow++;
@@ -93,26 +90,8 @@ namespace WinFormsAppPaymentUrl
             OpenAndUpdateExcel.UpdateFile();
             // Зміна розміру комірок взалежності від вмісту
             dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-        }
 
-
-        private void dataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (dataGridView.Columns[e.ColumnIndex].Name == "Payment Link")
-            {
-                string url = dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString();
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-        }
-
-        private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (dataGridView.Columns[e.ColumnIndex].Name == "Payment Link")
-            {
-                dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor = Color.Blue;
-                dataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.Font =
-                    new Font(dataGridView.Font, FontStyle.Underline);
-            }
+            MessageBox.Show("Посилання сформовані");
         }
     }
 }
