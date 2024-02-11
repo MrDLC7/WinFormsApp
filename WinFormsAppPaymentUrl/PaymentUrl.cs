@@ -95,7 +95,7 @@ namespace WinFormsAppPaymentUrl
             dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
 
-        // Обробка кліку по посинню
+        // Обробка кліку по посиланню
         private void dataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView.Columns[e.ColumnIndex].Name == "Payment Link")
