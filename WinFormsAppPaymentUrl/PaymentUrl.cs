@@ -1,6 +1,5 @@
 using System.Data;
 using System.Diagnostics;
-using System.Windows.Forms;
 
 namespace WinFormsAppPaymentUrl
 {
@@ -10,6 +9,7 @@ namespace WinFormsAppPaymentUrl
         {
             InitializeComponent();
         }
+
         // Для зберрігання шляху до файлу
         static protected string path = string.Empty;
         // Створення екземпляру класу DataTable для збереження даних
@@ -95,7 +95,7 @@ namespace WinFormsAppPaymentUrl
             dataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
 
-
+        // Обробка кліку по посинню
         private void dataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView.Columns[e.ColumnIndex].Name == "Payment Link")
@@ -105,6 +105,7 @@ namespace WinFormsAppPaymentUrl
             }
         }
 
+        // Відображення посилань
         private void dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (dataGridView.Columns[e.ColumnIndex].Name == "Payment Link")
