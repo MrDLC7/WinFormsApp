@@ -61,6 +61,7 @@ namespace WinFormsAppPaymentUrl
             int statusIndexColumn = -1;
             int statusIndexRow = -1;
             int linkIndexColumn = -1;
+            int emailIndexColumn = -1;
 
             try
             {
@@ -73,13 +74,15 @@ namespace WinFormsAppPaymentUrl
 
                 OpenAndUpdateExcel.SearchColumn_Header("Debt",
                     out statusIndexRow, out debtIndexColumn);
+                OpenAndUpdateExcel.SearchColumn_Header("Email",
+                    out statusIndexRow, out emailIndexColumn);
 
                 int Nrow = dataTable.Rows.Count;   // Кількіть рядків без заголовка
                 while (statusIndexRow < Nrow)
                 {
                     // Оновлення колонки з заголовком "Статус"
-                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending",
-                        statusIndexRow, statusIndexColumn, linkIndexColumn, debtIndexColumn);
+                    OpenAndUpdateExcel.UpdatePayStatus("open", "pending", statusIndexRow, 
+                        statusIndexColumn, linkIndexColumn, debtIndexColumn, emailIndexColumn);
 
                     statusIndexRow++;
                 }

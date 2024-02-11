@@ -146,18 +146,19 @@ namespace WinFormsAppPaymentUrl
         }
 
         static public void UpdatePayStatus(string in_String, string out_String, int rowIndex,
-            int columnIndexStatus, int linkIndexColumn, int debtIndexColumn)
+            int columnIndexStatus, int linkIndexColumn, int debtIndexColumn, int emailIndexColumn)
         {
             if (dataTable.Rows[rowIndex][columnIndexStatus].ToString().Contains(in_String))
             {
                 // Зміна статусу
                 dataTable.Rows[rowIndex][columnIndexStatus] = out_String;
                 // Додавання посилання
-                dataTable.Rows[rowIndex][linkIndexColumn] = AddPaymentUrl(rowIndex, debtIndexColumn);
+                dataTable.Rows[rowIndex][linkIndexColumn] = AddPaymentUrl(rowIndex, 
+                    debtIndexColumn, emailIndexColumn);
             }
         }
 
-        static public string AddPaymentUrl(int rowIndex, int columnIndex)
+        static public string AddPaymentUrl(int rowIndex, int columnIndex, int columnIndexEmail)
         {
             string url = string.Empty;
 
@@ -169,6 +170,7 @@ namespace WinFormsAppPaymentUrl
                 var req = new CheckoutRequest
                 {
                     order_id = Guid.NewGuid().ToString("N"),
+                    sender_email = dataTable.Rows[rowIndex][columnIndexEmail].ToString(),
                     amount = Convert.ToInt32(dataTable.Rows[rowIndex][columnIndex]) * 100,
                     order_desc = "checkout json demo",
                     currency = "UAH"
