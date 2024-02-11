@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Security.Policy;
 using CloudIpspSDK;
 using CloudIpspSDK.Checkout;
 
@@ -26,8 +25,9 @@ namespace WinFormsAppPaymentUrl
             int rows = range.Rows.Count;
             int columns = range.Columns.Count;
 
-            DataTable dataTableCopy = new();
-            dataTable = dataTableCopy;
+            // Для скидання dataTable
+            DataTable dataTableReset = new();
+            dataTable = dataTableReset;
             try
             {
                 // Заповнення DataTable даними з Excel
@@ -84,12 +84,15 @@ namespace WinFormsAppPaymentUrl
             {
                 int Nrows = dataTable.Rows.Count;
                 int Ncols = dataTable.Columns.Count;
+                int ColumnLinkIndex = -1;
 
 
                 // Заповнення заголовків Excel, даними з DataTable
                 for (int column = 0; column < Ncols; column++)
                 {
                     worksheet.Cells[1, column + 1] = dataTable.Columns[column].ColumnName;
+                    // Знаходимо індекс колонки для посилання
+                    ColumnLinkIndex = (dataTable.Columns[column].ColumnName == "Payment Link") ? column : -1;
                 }
 
                 // Заповнення полів Excel, даними з DataTable
@@ -97,7 +100,15 @@ namespace WinFormsAppPaymentUrl
                 {
                     for (int column = 0; column < Ncols; column++)
                     {
-                        worksheet.Cells[row + 2, column + 1] = dataTable.Rows[row][column].ToString();
+                        if (column == ColumnLinkIndex)
+                        {
+                            string url = dataTable.Rows[row][column].ToString();
+
+                            // Запис посилання в комірку "Payment Link"
+                            worksheet.Cells[row + 2, column + 1] = $"=HYPERLINK(\"{url}\", \"{url}\")";
+                        }
+                        else
+                            worksheet.Cells[row + 2, column + 1] = dataTable.Rows[row][column].ToString();
                     }
                 }
             }
@@ -107,6 +118,8 @@ namespace WinFormsAppPaymentUrl
             }
             finally
             {
+                // Зміна розміру комірок взалежності від вмісту
+                worksheet.Columns.AutoFit();
                 // Збереження книги Excel
                 workbook.Save();
                 // Закриття об'єктів Excel
@@ -156,12 +169,12 @@ namespace WinFormsAppPaymentUrl
                 var req = new CheckoutRequest
                 {
                     order_id = Guid.NewGuid().ToString("N"),
-                    amount = Convert.ToInt32(dataTable.Rows[rowIndex][columnIndex]),
+                    amount = Convert.ToInt32(dataTable.Rows[rowIndex][columnIndex]) * 100,
                     order_desc = "checkout json demo",
-                    currency = "EUR"
+                    currency = "UAH"
                 };
 
-                var resp = new CloudIpspSDK.Checkout.Url().Post(req);
+                var resp = new Url().Post(req);
                 if (resp.Error == null)
                 {
                     url = resp.checkout_url;
